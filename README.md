@@ -37,7 +37,7 @@ In a more illustrative way:
 ###### at run (/Users/mvaldes/Sandbox/long-promise/index.js:43:10)
 ![Fifth Line](https://i.imgur.com/X795KQu.png)
 ###### at Object.<anonymous> (/Users/mvaldes/Sandbox/long-promise/index.js:52:1)
-![Sixth Line](https://i.imgur.com/roQquTD.png)
+![Sixth Line](https://i.imgur.com/j7Y5I3U.png)
 
 We can now follow the complete flow of the program, from the beginning of execution up until the error is triggered,
 including the two steps of recursion.
