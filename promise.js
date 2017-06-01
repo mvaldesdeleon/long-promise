@@ -17,6 +17,14 @@ const instrumentedThen = pushErrorContext => {
     };
 };
 
+// Sadly, it appears that the native `throws` occur asynchronously. This means by the time we pick up an error has happened,
+// there is nothing to link us back to the execution context that triggered the error.
+// To get around this limitation, we are forced to instrument the `Promise.prototype.then` method,
+// such that we are able to detect any errors caused by the callbacks while we are still in the same execution context,
+// save a reference to the context, then rethrow the error.
+// This of course means that the stack traces will include our instrumentation,
+// which is why we provide a way to filter the results when requesting a long stack trace.
+
 const patch = pushErrorContext => Promise.prototype.then = instrumentedThen(pushErrorContext);
 const restore = () => Promise.prototype.then = _then;
 
