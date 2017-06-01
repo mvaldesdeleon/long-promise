@@ -1,0 +1,28 @@
+{
+  "name": "long-promise",
+  "version": "0.0.1",
+  "description": "Long stack traces for Promise (Node 8 only)",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^3.19.0"
+  },
+  "repository": "mvaldesdeleon/long-promise",
+  "keywords": [
+    "node-8",
+    "async_wrap",
+    "async_hooks",
+    "instrumentation",
+    "promise",
+    "stacktrace",
+    "long"
+  ],
+  "author": "Martin Valdes de Leon <m.valdesdeleon@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=8.0.0"
+  }
+}

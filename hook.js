@@ -1,6 +1,6 @@
 const asyncHooks = require('async_hooks');
 
-const head = array => array.length ? array[array.length - 1] : null
+const head = array => array.length ? array[array.length - 1] : null;
 
 let promiseData;
 let contextStack;
@@ -47,7 +47,7 @@ const getContext = () => contextStack.slice();
 const pushErrorContext = () => errorStack.push(getContext());
 const getLastErrorContext = () => head(errorStack);
 
-function init(id, type, triggerId, resource) {
+function init(id, type, triggerId) {
     if (type !== 'PROMISE') return;
 
     promiseData.set(id, {
@@ -89,7 +89,6 @@ function disable() {
 }
 
 function getLongStack(err, filter = () => true) {
-    const currentContext = head(getContext());
     const errorContext = head(getLastErrorContext());
     const headline = err.stack.split('\n')[0];
 
