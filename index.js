@@ -18,7 +18,7 @@ const delay = ms => x => {
 };
 
 const nestedProblems = x => () => {
-    // After the third call, go to an evetual `delay(100)` that throws
+    // After the third call, go to an eventual `delay(100)` that throws
     if (x === 3) return Promise.resolve(1).then(delay(100));
 
     // Promise chain with recursion
