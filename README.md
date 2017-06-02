@@ -3,7 +3,7 @@
 Long stack traces with Promises, using the brand-new `async_hooks` API provided by Node 8.0.0.
 
 ```JS
-const lp = require('./index.js');
+const lp = require('long-promise');
 
 lp.enable();
 
