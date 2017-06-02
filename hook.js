@@ -6,40 +6,6 @@ let promiseData;
 let contextStack;
 let errorStack;
 
-const LINE_REGEX_A = /^ *at (.+) \((.+):(\d+):(\d+)\)$/;
-const LINE_REGEX_B = /^ *at (.+) \(([^:]+)\)$/;
-const LINE_REGEX_C = /^ *at (.+):(\d+):(\d+)$/;
-
-const parseLine = line => {
-    let match = line.match(LINE_REGEX_A);
-
-    if (match) return {
-        fn: match[1],
-        file: match[2],
-        line: match[3],
-        column: match[4]
-    };
-
-    match = line.match(LINE_REGEX_B);
-
-    if (match) return {
-        fn: match[1],
-        file: '',
-        line: '',
-        column: ''
-    };
-
-    match = line.match(LINE_REGEX_C);
-
-    if (match) return {
-        fn: 'then',
-        file: match[1],
-        line: match[2],
-        column: match[3]
-    };
-
-    return null;
-};
 const parseStack = stack => stack.split('\n').slice(1);
 const getStack = () => parseStack((new Error()).stack);
 const getContext = () => contextStack.slice();
