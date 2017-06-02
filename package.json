@@ -1,6 +1,6 @@
 {
   "name": "long-promise",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Long stack traces for Promise (Node 8 only)",
   "main": "index.js",
   "scripts": {
