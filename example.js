@@ -43,8 +43,8 @@ function run() {
         .then(stuff)
         .then(stuff)
         .catch(err => {
-            // Profit
             console.log(lp.getLongStack(err));
+            // Profit
         });
 }
 

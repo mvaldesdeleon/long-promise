@@ -2,45 +2,90 @@
 
 Long stack traces with Promises, using the brand-new `async_hooks` API provided by Node 8.0.0.
 
-For the moment this is just a POC. Feel free to take a look at the sample situation in the index.js file.
+```JS
+const lp = require('./index.js');
 
-The produced stack trace is the following (library files removed):
+lp.enable();
+
+// Simulate some stuff
+const stuff = x => 2 + x;
+
+// Simulate a delay.
+const delay = ms => x => {
+    // This function is `buggy` and will throw if the delay is 100ms.
+    if (ms === 100) throw new Error('boom');
+
+    return new Promise(res => {
+        setTimeout(() => {
+            res(x);
+        }, ms);
+    });
+};
+
+const nestedProblems = x => () => {
+    // After the third call, go to an eventual `delay(100)` that throws
+    if (x === 3) return Promise.resolve(1).then(delay(100));
+
+    // Promise chain with recursion
+    return Promise.resolve(1)
+        .then(delay(10))
+        .then(stuff)
+        .then(nestedProblems(x + 1));
+};
+
+// Main program
+function run() {
+    const p = Promise.resolve(2);
+
+    // Do some things. Something along this promise chain will throw.
+    p.then(stuff)
+        .then(delay(10))
+        .then(stuff)
+        .then(delay(10))
+        .then(stuff)
+        .then(nestedProblems(1))
+        .then(stuff)
+        .then(stuff)
+        .catch(err => {
+            console.log(lp.getLongStack(err));
+            // Profit
+        });
+}
+
+run();
+```
+
+This produces the following stack trace:
 
 ```
 Error: boom
-    at x (/Users/mvaldes/Sandbox/long-promise/index.js:11:27)
-    at then (/Users/mvaldes/Sandbox/long-promise/index.js:22:44)
-    at then (/Users/mvaldes/Sandbox/long-promise/index.js:28:10)
-    at then (/Users/mvaldes/Sandbox/long-promise/index.js:28:10)
-    at run (/Users/mvaldes/Sandbox/long-promise/index.js:43:10)
-    at Object.<anonymous> (/Users/mvaldes/Sandbox/long-promise/index.js:52:1)
+    at x (/Users/mvaldes/Sandbox/long-promise/example.js:12:27)
+    at <anonymous>
+    at Promise.then (<anonymous>)
+    at /Users/mvaldes/Sandbox/long-promise/example.js:23:44
+    at <anonymous>
+    at Promise.then (<anonymous>)
+    at /Users/mvaldes/Sandbox/long-promise/example.js:29:10
+    at <anonymous>
+    at Promise.then (<anonymous>)
+    at /Users/mvaldes/Sandbox/long-promise/example.js:29:10
+    at <anonymous>
+    at Promise.then (<anonymous>)
+    at run (/Users/mvaldes/Sandbox/long-promise/example.js:42:10)
+    at Object.<anonymous> (/Users/mvaldes/Sandbox/long-promise/example.js:51:1)
+    at Module._compile (module.js:569:30)
+    at Object.Module._extensions..js (module.js:580:10)
 ```
 
-Compared to the "normal" stack trace (library files removed):
+Without `long-promise` enabled, the original stack trace is the following:
 
 ```
 Error: boom
-    at x (/Users/mvaldes/Sandbox/long-promise/index.js:11:27)
+    at x (/Users/mvaldes/Sandbox/long-promise/example.js:12:27)
     at <anonymous>
 ```
 
-In a more illustrative way:
-
-###### at x (/Users/mvaldes/Sandbox/long-promise/index.js:11:27)
-![First Line](https://i.imgur.com/eFTQQVP.png)
-###### at then (/Users/mvaldes/Sandbox/long-promise/index.js:22:44)
-![Second Line](https://i.imgur.com/08qsnDv.png)
-###### at then (/Users/mvaldes/Sandbox/long-promise/index.js:28:10)
-![Third Line](https://i.imgur.com/QbCOvE7.png)
-###### at then (/Users/mvaldes/Sandbox/long-promise/index.js:28:10)
-![Fourth Line](https://i.imgur.com/QbCOvE7.png)
-###### at run (/Users/mvaldes/Sandbox/long-promise/index.js:43:10)
-![Fifth Line](https://i.imgur.com/X795KQu.png)
-###### at Object.<anonymous> (/Users/mvaldes/Sandbox/long-promise/index.js:52:1)
-![Sixth Line](https://i.imgur.com/j7Y5I3U.png)
-
-We can now follow the complete flow of the program, from the beginning of execution up until the error is triggered,
-including the two steps of recursion.
+This is very early work, any contributions are welcome.
 
 # install
 with [npm](https://npmjs.org) do:
