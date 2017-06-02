@@ -40,8 +40,7 @@ const parseLine = line => {
 
     return null;
 };
-const formatLine = line => `    at ${line.fn} (${line.file}:${line.line}:${line.column})`;
-const parseStack = stack => stack.split('\n').slice(1).map(parseLine).filter(line => line);
+const parseStack = stack => stack.split('\n').slice(1);
 const getStack = () => parseStack((new Error()).stack);
 const getContext = () => contextStack.slice();
 const pushErrorContext = () => errorStack.push(getContext());
@@ -101,7 +100,7 @@ function getLongStack(err, filter = () => true) {
         longStack = longStack.concat(nextContextData.stack);
         nextContext = head(nextContextData.context);
     }
-    return headline + '\n' + longStack.map(formatLine).filter(filter).join('\n');
+    return headline + '\n' + longStack.filter(filter).join('\n');
 }
 
 
